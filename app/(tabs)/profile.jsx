@@ -39,12 +39,16 @@ export default function Profile() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to fetch user books");
+      if (!response.ok)
+        throw new Error(data.message || "Failed to fetch user books");
 
       setBooks(data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      Alert.alert("Error", "Failed to load profile data. Pull down to refresh.");
+      Alert.alert(
+        "Error",
+        "Failed to load profile data. Pull down to refresh."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +58,7 @@ export default function Profile() {
     fetchData();
   }, []);
 
-  const handleDeleteBook = async (bookId) => {
+  const handleDeleteBook = async bookId => {
     try {
       setDeleteBookId(bookId);
 
@@ -64,9 +68,10 @@ export default function Profile() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to delete book");
+      if (!response.ok)
+        throw new Error(data.message || "Failed to delete book");
 
-      setBooks(books.filter((book) => book._id !== bookId));
+      setBooks(books.filter(book => book._id !== bookId));
       Alert.alert("Success", "Recommendation deleted successfully");
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to delete recommendation");
@@ -75,11 +80,19 @@ export default function Profile() {
     }
   };
 
-  const confirmDelete = (bookId) => {
-    Alert.alert("Delete Recommendation", "Are you sure you want to delete this recommendation?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: () => handleDeleteBook(bookId) },
-    ]);
+  const confirmDelete = bookId => {
+    Alert.alert(
+      "Delete Recommendation",
+      "Are you sure you want to delete this recommendation?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => handleDeleteBook(bookId),
+        },
+      ]
+    );
   };
 
   const renderBookItem = ({ item }) => (
@@ -87,14 +100,21 @@ export default function Profile() {
       <Image source={item.image} style={styles.bookImage} />
       <View style={styles.bookInfo}>
         <Text style={styles.bookTitle}>{item.title}</Text>
-        <View style={styles.ratingContainer}>{renderRatingStars(item.rating)}</View>
+        <View style={styles.ratingContainer}>
+          {renderRatingStars(item.rating)}
+        </View>
         <Text style={styles.bookCaption} numberOfLines={2}>
           {item.caption}
         </Text>
-        <Text style={styles.bookDate}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+        <Text style={styles.bookDate}>
+          {new Date(item.createdAt).toLocaleDateString()}
+        </Text>
       </View>
 
-      <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item._id)}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => confirmDelete(item._id)}
+      >
         {deleteBookId === item._id ? (
           <ActivityIndicator size="small" color={COLORS.primary} />
         ) : (
@@ -104,7 +124,7 @@ export default function Profile() {
     </View>
   );
 
-  const renderRatingStars = (rating) => {
+  const renderRatingStars = rating => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
@@ -143,7 +163,7 @@ export default function Profile() {
       <FlatList
         data={books}
         renderItem={renderBookItem}
-        keyExtractor={(item) => item._id}
+        keyExtractor={item => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.booksList}
         refreshControl={
@@ -156,9 +176,16 @@ export default function Profile() {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="book-outline" size={50} color={COLORS.textSecondary} />
+            <Ionicons
+              name="book-outline"
+              size={50}
+              color={COLORS.textSecondary}
+            />
             <Text style={styles.emptyText}>No recommendations yet</Text>
-            <TouchableOpacity style={styles.addButton} onPress={() => router.push("/create")}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => router.push("/create")}
+            >
               <Text style={styles.addButtonText}>Add Your First Book</Text>
             </TouchableOpacity>
           </View>
